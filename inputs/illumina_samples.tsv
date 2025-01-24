@@ -1,0 +1,3 @@
+seq_dir	forward read	reverse read	BMC_ID	sample	Adapter
+D24-16872-6964L	/orcd/data/chisholm/001/chisholmlab/experiment_repository/2024/241105Chi/D24-16872-6964L/241105Chi_D24-16872_1_sequence.fastq	/orcd/data/chisholm/001/chisholmlab/experiment_repository/2024/241105Chi/D24-16872-6964L/241105Chi_D24-16872_2_sequence.fastq	D24-16872	9301_2	(GCCTAACG+CTTGAGAG)
+D24-16871-6964L	/orcd/data/chisholm/001/chisholmlab/experiment_repository/2024/241105Chi/D24-16871-6964L/241105Chi_D24-16871_1_sequence.fastq	/orcd/data/chisholm/001/chisholmlab/experiment_repository/2024/241105Chi/D24-16871-6964L/241105Chi_D24-16871_2_sequence.fastq	D24-16871	9301_1	(CTTAAGTC+ACAACTAC)

@@ -1,0 +1,44 @@
+from pathlib import Path
+import pandas as pd
+
+### Load samples.tsv file and obtain list of samples ###
+SAMPLE_TABLE = pd.read_csv(config["input"]["sample table"], index_col="sample", sep="\t")
+SAMPLE_TABLE.index = SAMPLE_TABLE.index.map(str)  # convert index (samples) to string 
+SAMPLES = SAMPLE_TABLE.index.tolist()  # obtain list of samples 
+
+##### Define intermediate/results files/directories #####
+scratch_dir = Path(config["scratch directory"])
+results_dir = Path(config["results directory"])
+
+Path(scratch_dir).mkdir(exist_ok=True, parents=True)
+Path(results_dir).mkdir(exist_ok=True, parents=True)
+
+scratch_dict = {
+    "QC": scratch_dir / "QC",  # QC: read trimming/filtering
+    "genome_assembly": scratch_dir / "genome_assembly",  # read assembly 
+    "read_mapping": scratch_dir / "read_mapping",  # read mapping (pre-binning)
+    "metabat_binning": scratch_dir / "metabat_binning",  # metabat2 assembly binning 
+    "checkm_genome_quality": scratch_dir / "checkm_genome_quality",  # bin quality
+    "gtdb_classification": scratch_dir / "gtdb_classification",  # GTDB-tk taxonomic classification 
+}
+results_dict = {}
+
+##### Define the file files to generate #####
+rule all:
+    input:
+        expand(scratch_dict["metabat_binning"] / "depth" / "{sample}_depth.txt", sample=SAMPLES)
+
+##### Pre-processing: Illumina or Nanopore #####
+if config["input"]["seq data type"] == "illumina short read":
+    assembly_fname = "scaffolds"
+    for smk_file in Path('workflow/rules/illumina_shortread_preprocessing').glob('*smk'):
+        include: str(smk_file).replace('workflow/', '')  
+
+if config["input"]["seq data type"] == "nanopore long read":
+    assembly_fname = "assembly"
+    for smk_file in Path('workflow/rules/nanopore_longread_preprocessing').glob('*smk'):
+        include: str(smk_file).replace('workflow/', '') 
+
+##### Import all .smk files for rules shared between both data types #####
+for smk_file in Path('workflow/rules').glob('*smk'):
+    include: str(smk_file).replace('workflow/', '') 

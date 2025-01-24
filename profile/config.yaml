@@ -1,0 +1,34 @@
+snakefile: workflow/Snakefile
+use-conda: True
+conda-frontend: mamba
+rerun-incomplete: True
+jobs: 3  # number of jobs (samples) to process at once 
+latency-wait: 120
+keep-going: True
+configfile: inputs/config.yaml
+keep-incomplete: False
+# unlock: True
+
+cluster: 
+  mkdir -p logs/{rule} &&
+  sbatch
+    --partition={resources.partition}
+    --ntasks={resources.tasks}
+    --cpus-per-task={resources.cpus_per_task}
+    --mem={resources.mem}
+    --time={resources.time}
+    --job-name={rule}-%j
+    --output="logs/{rule}/{wildcards}.out"
+    --error="logs/{rule}/{wildcards}.err"
+
+# adjust as needed (increase time and mem if files are large)
+# most rules are multi-threaded 
+default-resources: 
+  - time="12:00:00"  # default time 
+  - partition="newnodes"
+  - mem=50000  # default memory 
+  - cpus_per_task=5
+  - tasks=1
+
+# for rules that aren't mutli-threaded
+# set-resources:
