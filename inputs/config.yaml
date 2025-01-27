@@ -1,8 +1,8 @@
 experiment_name: MAG assembly pipeline 
 
 input: 
-  sample table: inputs/illumina_samples.tsv
-  seq data type: illumina short read  # alternative: nanopore long read
+  sample table: inputs/nanopore_samples.tsv
+  seq data type: nanopore long read  # alternative: illumina short read
   adapter_file: inputs/all_illumina_adapters.fa  
 
 database: 

@@ -30,5 +30,6 @@ default-resources:
   - cpus_per_task=10
   - tasks=1
 
-# for rules that aren't mutli-threaded
-# set-resources:
+# for final aggregate rule that isn't mutli-threaded
+set-resources:
+  - aggregate_results:cpus_per_task=1
