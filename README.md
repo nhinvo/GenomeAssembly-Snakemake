@@ -36,6 +36,7 @@ Create **samples.tsv** file in the `inputs/` Directory:
   - Required columns for Nanopore samples: ["read path", "sample"]
     - "read path": path to .fastq file
     - "sample": unique sample identifier
+  - Note: 2 example samples.tsv files for each sequencing data type were included in "inputs/" directory
 
 #### 2. Edit Resource Specifications 
 Edit **config.yaml** file in the `profile/` Directory:

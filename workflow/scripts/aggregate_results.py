@@ -9,11 +9,12 @@ bindir_list = snakemake.input['bin_dirs']  # list of directories containin bins
 quality_list = snakemake.input['qualities']  # list of checkm quality outputs
 classification_list = snakemake.input['classifications']  # list of gtdb-tk classification outputs 
 # sample_table = snakemake.config['input']['sample table']
-output = snakemake.output  # path to output final .tsv file 
+output = snakemake.output[0]  # path to output final .tsv file 
 
-print(metabat_bindir_list)
+print(bindir_list)
 print(quality_list)
 print(classification_list)
+print(output)
 
 def process_bins(bindir_list):
     """
@@ -23,6 +24,7 @@ def process_bins(bindir_list):
 
     # cycle through every bins 
     for bindir_fpath in bindir_list:
+        bindir_fpath = Path(bindir_fpath) 
         sample = bindir_fpath.name
 
         for bin_fpath in Path(bindir_fpath).glob('*fa'):
@@ -112,6 +114,9 @@ def main():
     ]
 
     df = df[cols]
+
+    # sort df 
+    df = df.sort_values(by=['sample', 'Completeness'], ascending=False)
 
     # save data 
     df.to_csv(output, sep='\t', index=False)
