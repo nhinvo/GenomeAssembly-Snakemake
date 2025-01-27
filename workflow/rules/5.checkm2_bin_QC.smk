@@ -6,7 +6,7 @@ rule checkm_bin_quality:
         bin_dir = scratch_dict["metabat_binning"] / "bins" / "{sample}", 
         connect = scratch_dict["metabat_binning"] / "depth" / "{sample}_depth.txt",  # input to connect rule to binning 
     output: 
-        scratch_dict["checkm_genome_quality"] / "{sample}" / "quality_report.tsv"
+        scratch_dict["checkm_bin_quality"] / "{sample}" / "quality_report.tsv"
     conda: 
         "../envs/checkm2.yaml"
     params:

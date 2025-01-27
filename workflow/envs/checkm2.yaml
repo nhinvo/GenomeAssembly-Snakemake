@@ -3,4 +3,4 @@ channels:
 - bioconda
 - defaults
 dependencies:
-- checkm2=1.0.1
+- checkm2=1.0.1  # as of 01/27/25, older versions of checkm2 has bugs

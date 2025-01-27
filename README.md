@@ -21,7 +21,7 @@ Install the GTDB Database by running script in `inputs/database_dl/` directory:
 Note: this script downloads database into the same directory. Change path in script or run script in another folder if preferred.  
 
 ### 3.Set up Snakemake Pipeline
-#### 1. Experimental Configurations
+#### 1. Edit Experimental Configurations
 Edit **config.yaml** file in the `inputs/` Directory:
   - Edit relative path to sample table in line 4
   - Edit "seq data type" in line 5. Options: "illumina short read"  or "nanopore long read"
@@ -37,11 +37,35 @@ Create **samples.tsv** file in the `inputs/` Directory:
     - "read path": path to .fastq file
     - "sample": unique sample identifier
 
-#### 2. Resource Specifications 
+#### 2. Edit Resource Specifications 
+Edit **config.yaml** file in the `profile/` Directory:
+  - Edit number of jobs (samples/processes/rules) to run at once on line 5
+  - Edit "default-resources" specifications on line 26
+    - Tips: obtain information on comptational resources for config file by: 
+      - `sinfo`: shows partitions you have access to, node time limit, and list of node names. 
+      - `scontrol show node [node_name]`: displays information about a node in partition. 
+        - "CPUTot=[int]": shows how many CPUs (cores) in this node; "cpus_per_task" on line 30 should not exceed this value. 
+        - "RealMemory=[int]": shows memory available in thie node; "mem" on line 29 should not exceed this value. 
 
 ## Running Pipeline 
+### 1. Edit main "run_assembly.sbatch" Script
+- Edit name of partition on line 4
+- Edit name of conda environment with Snakemake installed on line 10 (if env name is other than "snakemake")
+
+### 2. Submit Script to Cluster
+- Submit job to cluster by:  
+  ```
+  sbatch run_assembly.sbatch
+  ```  
 
 ## Troubleshooting 
-
-## Interpreting Results
+As the pipeline runs, log messages will be saved into file named "main.[slurm_job_ID].err" in the "logs" folder. Here are some tips on debugging: 
+- Each rule/job in the pipeline will get its own .err log file. When a rule fails, check the subfolder with the rule's name and sample where it failed. 
+- Locked directory: if you get the error message "Error: Directory cannot be locked":
+  - Make sure that all jobs from your previous run of the pipeline have completed/cancelled
+  - Uncomment line 10 "unlock: True" in "profile/config.yaml" file
+  - Run the pipeline following previous step: [Submit Script to Cluster](#2-submit-script-to-cluster)
+  - Wait for snakemake to complete running
+  - Comment line 10
+  - Re-run pipeline, the lock should now be removed  
 
