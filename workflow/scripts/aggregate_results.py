@@ -8,13 +8,7 @@ from pathlib import Path
 bindir_list = snakemake.input['bin_dirs']  # list of directories containin bins 
 quality_list = snakemake.input['qualities']  # list of checkm quality outputs
 classification_list = snakemake.input['classifications']  # list of gtdb-tk classification outputs 
-# sample_table = snakemake.config['input']['sample table']
 output = snakemake.output[0]  # path to output final .tsv file 
-
-print(bindir_list)
-print(quality_list)
-print(classification_list)
-print(output)
 
 def process_bins(bindir_list):
     """
