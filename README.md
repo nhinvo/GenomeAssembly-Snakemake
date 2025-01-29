@@ -72,7 +72,7 @@ As the pipeline runs, log messages will be saved into file named "main.[slurm_jo
 
 
 ## Results
-The result is a tab-separated file with the following columns:  
+**aggregate_table.tsv:** tab-separated file with the following columns:  
 - `sample`: unique sample name
 - `bin_id`: unique ID for binned assemblie, some samples can have multiple bins
 - `bin_contig_num`: number of assembled contigs
@@ -81,7 +81,12 @@ The result is a tab-separated file with the following columns:
 - `Contamination`: percent of contaminated sequence
 - `closest_genome_reference`: what genome in the GTDB database is the bin most closely related to 
 - `closest_genome_ani`: average nucleotide identity to the closest genome 
-- `warning`: GTDB-tk classification warning 
+- `warning`: GTDB-tk classification warning  
+
+**fastANI_Prochlorococcus.tsv:** tab-separated file of fastANI between Prochlorococcus genomes the following columns:  
+- `query`: query bin 
+- `reference`: reference bin 
+- `ANI`: Average Nucleotide Identity
 
 
 ## Workflow
