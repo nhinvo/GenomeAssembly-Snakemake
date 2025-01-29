@@ -20,20 +20,22 @@ scratch_dict = {
     "metabat_binning": scratch_dir / "metabat_binning",  # metabat2 assembly binning 
     "checkm_bin_quality": scratch_dir / "checkm_bin_quality",  # bin quality
     "gtdb_classification": scratch_dir / "gtdb_classification",  # GTDB-tk taxonomic classification 
+    "fastANI": scratch_dir / "fastANI",  # many-to-many bin fastANI
 }
 
 results_dict = {
     # binning, quality, and classification final table
-    'aggregate_table': results_dir / "aggregate_table.tsv"  
+    'aggregate_table': results_dir / "aggregate_table.tsv", 
+
+    # fastANI results between Pro bins
+    'fastANI_Prochlorococcus': results_dir / "fastANI_Prochlorococcus.tsv", 
 }
 
 ##### Define the file files to generate #####
 rule all:
     input:
+        results_dict['fastANI_Prochlorococcus'], 
         results_dict['aggregate_table'], 
-        # expand(scratch_dict["gtdb_classification"]  / "{sample}" / "gtdbtk.bac120.summary.tsv", sample=SAMPLES),
-        # expand(scratch_dict["checkm_genome_quality"] / "{sample}" / "quality_report.tsv", sample=SAMPLES), 
-        # expand(scratch_dict["metabat_binning"] / "depth" / "{sample}_depth.txt", sample=SAMPLES), 
 
 
 ##### Import Pre-processing Rules: Illumina or Nanopore #####
