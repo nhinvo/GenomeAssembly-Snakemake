@@ -30,6 +30,9 @@ results_dict = {
 
     # fastANI results between Pro bins
     'fastANI_Prochlorococcus': results_dir / "fastANI_Prochlorococcus.tsv", 
+
+    # table of paths to each bin's .gff files
+    'gff_path_table': results_dir / "gff_path_table.tsv", 
 }
 
 ##### Define the file files to generate #####
@@ -40,9 +43,7 @@ if config['additional output']['genome comparison']:
     pipeline_output.append(results_dict['fastANI_Prochlorococcus'])
 
 if config['additional output']['gene annotation']:
-    pipeline_output.append(
-        expand(scratch_dict['gene_annotation'] / "{sample}" / "{sample}_done.txt", sample=SAMPLES), 
-    )
+    pipeline_output.append(results_dict['gff_path_table'])
 
 # calling rule all 
 rule all:

@@ -11,12 +11,22 @@ rule annotate_gene:
         for file in {input}/*; do 
             echo Running prokka on: $file
 
+            filename=$(basename "$file" .fa)
+
             prokka \
                 --cpus {resources.cpus_per_task} \
-                --force \
+                --force --prefix $filename \
                 --outdir $(dirname {output}) \
                 $file
+
+            echo Completed prokka on $filename. 
         done
 
         touch {output}
         """
+
+rule finalize_annot:
+    input: expand(scratch_dict['gene_annotation'] / "{sample}" / "{sample}_done.txt", sample=SAMPLES),
+    output: results_dict['gff_path_table'],
+    conda: "../envs/data.yaml"
+    script: "../scripts/finalize_annot.py"

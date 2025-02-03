@@ -30,6 +30,8 @@ default-resources:
   - cpus_per_task=10
   - tasks=1
 
-# for final aggregate rule that isn't mutli-threaded
+# for aggregate rules that aren't mutli-threaded
 set-resources:
   - aggregate_results:cpus_per_task=1
+  - parse_fastANI_Prochlorococcus:cpus_per_task=1
+  - finalize_annot:cpus_per_task=1
