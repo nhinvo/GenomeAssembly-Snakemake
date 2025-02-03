@@ -9,5 +9,9 @@ database:
   checkM database: /nfs/chisholmlab002/nvo/databases/checkM2_database/CheckM2_database/uniref100.KO.1.dmnd
   GTDB database: /nfs/chisholmlab002/nvo/databases/GTDB/release220
 
+additional output:
+  fastANI: True
+  gene annotation: True
+
 scratch directory: scratch
 results directory: results

@@ -21,6 +21,7 @@ scratch_dict = {
     "checkm_bin_quality": scratch_dir / "checkm_bin_quality",  # bin quality
     "gtdb_classification": scratch_dir / "gtdb_classification",  # GTDB-tk taxonomic classification 
     "fastANI": scratch_dir / "fastANI",  # many-to-many bin fastANI
+    "gene_annotation": scratch_dir / "gene_annotation",  # prokka gene annotations 
 }
 
 results_dict = {
@@ -32,11 +33,21 @@ results_dict = {
 }
 
 ##### Define the file files to generate #####
+pipeline_output = [results_dict['aggregate_table']]
+
+# add extra output if specified 
+if config['additional output']['fastANI']:
+    pipeline_output.append(results_dict['fastANI_Prochlorococcus'])
+
+if config['additional output']['gene annotation']:
+    pipeline_output.append(
+        expand(scratch_dict['gene_annotation'] / "{sample}" / "{sample}_done.txt", sample=SAMPLES), 
+    )
+
+# calling rule all 
 rule all:
     input:
-        results_dict['fastANI_Prochlorococcus'], 
-        results_dict['aggregate_table'], 
-
+        pipeline_output, 
 
 ##### Import Pre-processing Rules: Illumina or Nanopore #####
 if config["input"]["seq data type"] == "illumina short read":
