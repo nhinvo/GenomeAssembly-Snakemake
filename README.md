@@ -1,5 +1,5 @@
 # GenomeAssembly-Snakemake
-Genome Assembly Pipeline for Illumina short read and Oxford Nanopore long read. 
+Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline for: Illumina short read and Oxford Nanopore long read.
 
 ## Setup
 ### 1. Install Snakemake and Conda/Mamba  
@@ -26,7 +26,10 @@ Edit **config.yaml** file in the `inputs/` Directory:
   - Edit relative path to sample table in line 4
   - Edit "seq data type" in line 5. Options: "illumina short read"  or "nanopore long read"
   - Edit paths to reference databases in lines 9 & 10
-  - Edit paths to scratch (intermediate) directory and results directory in lines 12 & 13. 
+  - Edit whether you want genome comparison and gene annotation in line 13 and 14. 
+    - gene comparison: many-to-many fastANI comparison between all bins. 
+    - gene annotation: annotate bins using prokka. 
+  - Edit paths to scratch (intermediate) directory and results directory in lines 16 & 17. 
 
 Create **samples.tsv** file in the `inputs/` Directory: 
   - Create samples.tsv file for your samples with the following required columns (and any other columns for your samples): 
@@ -102,3 +105,5 @@ As the pipeline runs, log messages will be saved into file named "main.[slurm_jo
 - Read Binning: metabat2
 - Bin Quality Assessment: checkM2
 - Taxonomic Classification: GTDB-tk
+- Genome Comparison: fastANI, many-to-many (all bins are compared against eah other)
+- Gene Annotation: prokka 

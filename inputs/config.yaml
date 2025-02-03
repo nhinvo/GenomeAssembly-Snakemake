@@ -10,7 +10,7 @@ database:
   GTDB database: /nfs/chisholmlab002/nvo/databases/GTDB/release220
 
 additional output:
-  fastANI: True
+  genome comparison: True
   gene annotation: True
 
 scratch directory: scratch

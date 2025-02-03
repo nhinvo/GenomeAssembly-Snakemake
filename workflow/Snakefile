@@ -36,7 +36,7 @@ results_dict = {
 pipeline_output = [results_dict['aggregate_table']]
 
 # add extra output if specified 
-if config['additional output']['fastANI']:
+if config['additional output']['genome comparison']:
     pipeline_output.append(results_dict['fastANI_Prochlorococcus'])
 
 if config['additional output']['gene annotation']:
