@@ -21,7 +21,8 @@ scratch_dict = {
     "checkm_bin_quality": scratch_dir / "checkm_bin_quality",  # bin quality
     "gtdb_classification": scratch_dir / "gtdb_classification",  # GTDB-tk taxonomic classification 
     "fastANI": scratch_dir / "fastANI",  # many-to-many bin fastANI
-    "gene_annotation": scratch_dir / "gene_annotation",  # prokka gene annotations 
+    "prokka_gene_annotation": scratch_dir / "prokka_gene_annotation",  # prokka gene annotations 
+    "eggnog_gene_annotation": scratch_dir / "eggnog_gene_annotation",  # eggnog on prokka annotation
 }
 
 results_dict = {
@@ -31,8 +32,11 @@ results_dict = {
     # fastANI results between Pro bins
     'fastANI_Prochlorococcus': results_dir / "fastANI_Prochlorococcus.tsv", 
 
-    # table of paths to each bin's .gff files
-    'gff_path_table': results_dir / "gff_path_table.tsv", 
+    # table of paths to each bin's prokka .gff files
+    'prokka_final_gff': results_dir / "prokka_gff_paths.tsv", 
+
+    # table of paths to each bin's eggnog .gff files
+    'eggnog_final_gff': results_dir / "eggnog_gff_paths.tsv", 
 }
 
 ##### Define the file files to generate #####
@@ -42,25 +46,32 @@ pipeline_output = [results_dict['aggregate_table']]
 if config['additional output']['genome comparison']:
     pipeline_output.append(results_dict['fastANI_Prochlorococcus'])
 
-if config['additional output']['gene annotation']:
-    pipeline_output.append(results_dict['gff_path_table'])
+if config['additional output']['prokka gene annotation']:
+    pipeline_output.append(results_dict['prokka_final_gff'])
+
+if config['additional output']['eggnog gene annotation']:
+    pipeline_output.append(results_dict['eggnog_final_gff'])
 
 # calling rule all 
 rule all:
     input:
         pipeline_output, 
 
-##### Import Pre-processing Rules: Illumina or Nanopore #####
+##### Import Pre-processing Rules: Illumina, Nanopore, or PacBio HiFi #####
+# assembly program output filename (spades vs. flye)
+assembly_fname = "scaffolds" if config["input"]["seq data type"] == "illumina short read" else "assembly"
+
 if config["input"]["seq data type"] == "illumina short read":
-    assembly_fname = "scaffolds"
     for smk_file in Path('workflow/rules/illumina_shortread_preprocessing').glob('*smk'):
         include: str(smk_file).replace('workflow/', '')  
 
 if config["input"]["seq data type"] == "nanopore long read":
-    assembly_fname = "assembly"
     for smk_file in Path('workflow/rules/nanopore_longread_preprocessing').glob('*smk'):
         include: str(smk_file).replace('workflow/', '') 
 
+if config["input"]["seq data type"] == "pacbio hifi long read":
+    for smk_file in Path('workflow/rules/pacbiohifi_longread_preprocessing').glob('*smk'):
+        include: str(smk_file).replace('workflow/', '') 
 
 ##### Import all .smk files for rules shared between both data types #####
 for smk_file in Path('workflow/rules').glob('*smk'):

@@ -34,4 +34,5 @@ default-resources:
 set-resources:
   - aggregate_results:cpus_per_task=1
   - parse_fastANI_Prochlorococcus:cpus_per_task=1
-  - finalize_annot:cpus_per_task=1
+  - aggregate_prokka:cpus_per_task=1
+  - aggregate_eggnog:cpus_per_task=1
