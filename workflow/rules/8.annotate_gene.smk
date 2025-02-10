@@ -68,7 +68,8 @@ rule aggregate_prokka:
     input: expand(scratch_dict['prokka_gene_annotation'] / "{sample}" / "{sample}_done.txt", sample=SAMPLES),
     output: results_dict['prokka_final_gff'],
     conda: "../envs/data.yaml"
-    script: "../scripts/aggregate_prokka.py"
+    shell: "touch {output}"  # temp
+    # script: "../scripts/aggregate_prokka.py"
 
 rule aggregate_eggnog:
     """
@@ -76,4 +77,5 @@ rule aggregate_eggnog:
     input: expand(scratch_dict['eggnog_gene_annotation'] / "{sample}" / "{sample}_done.txt", sample=SAMPLES),
     output: results_dict['eggnog_final_gff'],
     conda: "../envs/data.yaml"
-    script: "../scripts/aggregate_eggnog.py"
+    shell: "touch {output}"  # temp
+    # script: "../scripts/aggregate_eggnog.py"

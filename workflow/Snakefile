@@ -29,6 +29,9 @@ results_dict = {
     # binning, quality, and classification final table
     'aggregate_table': results_dir / "aggregate_table.tsv", 
 
+    # mapping statistics
+    'mapping_stats': results_dir / "mapping_stats.tsv", 
+
     # fastANI results between Pro bins
     'fastANI_Prochlorococcus': results_dir / "fastANI_Prochlorococcus.tsv", 
 
@@ -40,7 +43,11 @@ results_dict = {
 }
 
 ##### Define the file files to generate #####
-pipeline_output = [results_dict['aggregate_table']]
+# define output files that aren't conditional 
+pipeline_output = [
+    results_dict['aggregate_table'], 
+    results_dict['mapping_stats'], 
+]
 
 # add extra output if specified 
 if config['additional output']['genome comparison']:
