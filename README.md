@@ -1,5 +1,5 @@
 # GenomeAssembly-Snakemake
-Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline for: Illumina short read and Oxford Nanopore long read.
+Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline for: Illumina, Oxford Nanopore, and PacBio Hifi.
 
 ## Setup
 ### 1. Install Snakemake and Conda/Mamba  
@@ -7,16 +7,23 @@ Install Snakemake and Conda/Mamba following the instructions at this [link](http
 
 ### 2. Download Databases  
 #### 1. CheckM2 Database  
-Install the checkM2 Database by running script in `inputs/database_dl/` directory:   
+Install the checkM2 Database for assembly quality assessment by running script in `inputs/database_dl/` directory:   
   ```
   sbatch checkM2_db_dl.sbatch  
   ```  
 Note: this script creates a new conda environment name "genome-assembly-checkm2" and downloads database into the same directory. Change path in script or run script in another folder if preferred. 
 
 #### 2. GTDB-tk Database  
-Install the GTDB Database by running script in `inputs/database_dl/` directory:   
+Install the GTDB Database for downstream genome taxonomic classification by running script in `inputs/database_dl/` directory:   
   ```
   sbatch GTDB_dl.sbatch  
+  ```  
+Note: this script downloads database into the same directory. Change path in script or run script in another folder if preferred.  
+
+#### 2. eggnog Database
+Install the eggnog Database by running script in `inputs/database_dl/` directory:   
+  ```
+  sbatch eggnog_db_dl.sbatch  
   ```  
 Note: this script downloads database into the same directory. Change path in script or run script in another folder if preferred.  
 
@@ -24,11 +31,13 @@ Note: this script downloads database into the same directory. Change path in scr
 #### 1. Edit Experimental Configurations
 Edit **config.yaml** file in the `inputs/` Directory:
   - Edit relative path to sample table in line 4
-  - Edit "seq data type" in line 5. Options: "illumina short read"  or "nanopore long read"
-  - Edit paths to reference databases in lines 9 & 10
-  - Edit whether you want genome comparison and gene annotation in line 13 and 14. 
+  - Edit "seq data type"
+    - Options: "illumina short read", "nanopore long read", pr "pacbio hifi long read"  
+  - Edit paths to reference databases in "databases"
+  - Edit whether you want genome comparison and gene annotation in "additional output". 
     - gene comparison: many-to-many fastANI comparison between all bins. 
-    - gene annotation: annotate bins using prokka. 
+    - prokka gene annotation: annotate bins using prokka. 
+    - eggnog gene annotation: add eggnog annotations on genes predicted by prokka.  
   - Edit paths to scratch (intermediate) directory and results directory in lines 16 & 17. 
 
 Create **samples.tsv** file in the `inputs/` Directory: 
@@ -36,10 +45,17 @@ Create **samples.tsv** file in the `inputs/` Directory:
   - Required columns for Illumina samples: ["forward read", "reverse read", "sample"]
     - "forward read" and "reverse read": paths to forward and reverse read .fastq file
     - "sample": unique sample identifier
-  - Required columns for Nanopore samples: ["read path", "sample"]
-    - "read path": path to .fastq file
+  - Required columns for Nanopore samples: ["sample", "read path", "metagenomic"]
     - "sample": unique sample identifier
-  - Note: 2 example samples.tsv files for each sequencing data type were included in "inputs/" directory
+    - "read path": path to .fastq file
+    - "metagenomic": whether or not read file is metagenomics. Options: [True, False]
+      - This will affect metaflye read assembly (--meta)
+  - Required columns for Nanopore samples: ["sample", "bam_path", "metagenomic"]
+    - "sample": unique sample identifier
+    - "bam_path": path to hifi bam file 
+    - "metagenomic": whether or not read file is metagenomics. Options: [True, False]
+      - This will affect metaflye read assembly (--meta)
+  - Note: 3 example samples.tsv files for each sequencing data type were included in "inputs/example_samples_tsv" directory
 
 #### 2. Edit Resource Specifications 
 Edit **config.yaml** file in the `profile/` Directory:
@@ -95,13 +111,13 @@ As the pipeline runs, log messages will be saved into file named "main.[slurm_jo
 ## Workflow
 - QC: 
   - Illumina: bbduk read trimming
-  - Nanopore: filtlong
+  - Nanopore & PacBio: filtlong
 - Read Assembly: 
   - Illumina: SPAdes
-  - Nanopore: metaFlye
+  - Nanopore & PacBio: Flye/metaFlye
 - Read Mapping: 
   - Illumina: bowtie2
-  - Nanopore: minimap2
+  - Nanopore & PacBio: minimap2
 - Read Binning: metabat2
 - Bin Quality Assessment: checkM2
 - Taxonomic Classification: GTDB-tk
