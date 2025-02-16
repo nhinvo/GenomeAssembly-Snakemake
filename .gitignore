@@ -1,6 +1,10 @@
+inputs/samples.tsv
+
 logs/*
 !logs/.temp
+
 .snakemake
+
 results/*
 scratch/*
 trash/*

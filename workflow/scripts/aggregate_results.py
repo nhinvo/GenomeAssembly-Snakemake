@@ -109,6 +109,12 @@ def main():
 
     df = df[cols]
 
+    # filter df by checkm results
+    df = df[
+        (df['Completeness'] > snakemake.config['CheckM2']['completeness threshold']) &
+        (df['Contamination'] < snakemake.config['CheckM2']['contamination threshold'])
+    ]
+
     # sort df 
     df = df.sort_values(by=['sample', 'Completeness'], ascending=False)
 

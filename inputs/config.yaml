@@ -1,14 +1,18 @@
 experiment_name: MAG assembly pipeline 
 
 input: 
-  sample table: inputs/example_samples_tsv/pacbiorevio_samples.tsv
-  seq data type: pacbio hifi long read # alternatives: "illumina short read" | "nanopore long read"
+  sample table: inputs/samples.tsv
+  seq data type: illumina short read # alternatives: "pacbio hifi long read" | "nanopore long read"
   adapter_file: inputs/all_illumina_adapters.fa  
 
 database: 
   checkM database: /nfs/chisholmlab002/nvo/databases/checkM2_database/CheckM2_database/uniref100.KO.1.dmnd
   GTDB database: /nfs/chisholmlab002/nvo/databases/GTDB/release220
   eggnogg database: /nobackup1b/users/chisholmlab/databases/eggnog_database
+  
+CheckM2:
+  completeness threshold: 50  # remove assemblies with lower completeness  
+  contamination threshold: 1  # remove assemblies with greater contamination 
 
 additional output:
   genome comparison: False
