@@ -1,7 +1,7 @@
 # GenomeAssembly-Snakemake
 Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline for: Illumina, Oxford Nanopore, and PacBio Hifi.
 
-![Workflow Image](workflow/images/GenomeAssembly-Snakemake.png)  
+<img src="workflow/images/GenomeAssembly-Snakemake.png" alt="Workflow Image" style="width:50%;">
 
 ## Setup
 ### 1. Install Snakemake and Conda/Mamba  
