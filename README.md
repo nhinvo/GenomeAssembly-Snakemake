@@ -5,8 +5,8 @@ Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline
 
 ### Visualization
 <div style="display: flex; justify-content: space-between;">
-  <img src="workflow/images/bin_quality.png" alt="Image 1" style="width: 45%;"/>
-  <img src="workflow/images/bin_classification_GTDB.png" alt="Image 2" style="width: 45%;"/>
+  <img src="workflow/images/bin_quality.png" alt="Image 1" style="width: 40%;"/>
+  <img src="workflow/images/bin_classification_GTDB.png" alt="Image 2" style="width: 50%;"/>
 </div>
 
 ## Setup
