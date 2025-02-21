@@ -2,11 +2,12 @@ snakefile: workflow/Snakefile
 use-conda: True
 conda-frontend: mamba
 rerun-incomplete: True
-jobs: 3  # number of jobs (samples) to process at once 
+jobs: 8  # number of jobs (samples) to process at once 
 latency-wait: 120
 keep-going: True
 configfile: inputs/config.yaml
 keep-incomplete: False
+# dry-run: True
 # unlock: True
 
 cluster: 
@@ -26,13 +27,12 @@ cluster:
 default-resources: 
   - time="12:00:00"  # default time 
   - partition="sched_mit_chisholm"
-  - mem=50000  # default memory 
-  - cpus_per_task=5
+  - mem=250000  # default memory 
+  - cpus_per_task=20
   - tasks=1
 
 # for aggregate rules that aren't mutli-threaded
 set-resources:
   - aggregate_results:cpus_per_task=1
-  - parse_fastANI_Prochlorococcus:cpus_per_task=1
   - aggregate_prokka:cpus_per_task=1
   - aggregate_eggnog:cpus_per_task=1

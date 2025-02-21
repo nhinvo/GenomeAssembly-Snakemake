@@ -27,13 +27,15 @@ scratch_dict = {
 
 results_dict = {
     # binning, quality, and classification final table
-    'aggregate_table': results_dir / "aggregate_table.tsv", 
+    "final_tsv": results_dir / "results_unfiltered.tsv", 
+    "final_tsv_filtered": results_dir / "results.tsv", 
+
+    # plots
+    "bin_quality_plot": results_dir / "plots" / "bin_quality.png",  # checkM contam vs. completeness
+    "classification_plot": results_dir / "plots" / "GTDB_classification.png",
 
     # mapping statistics
     'mapping_stats': results_dir / "mapping_stats.tsv", 
-
-    # fastANI results between Pro bins
-    'fastANI_Prochlorococcus': results_dir / "fastANI_Prochlorococcus.tsv", 
 
     # table of paths to each bin's prokka .gff files
     'prokka_final_gff': results_dir / "prokka_gff_paths.tsv", 
@@ -45,13 +47,11 @@ results_dict = {
 ##### Define the file files to generate #####
 # define output files that aren't conditional 
 pipeline_output = [
-    results_dict['aggregate_table'], 
+    results_dict['final_tsv'], 
+    results_dict['bin_quality_plot'], 
+    results_dict['classification_plot'],
     results_dict['mapping_stats'], 
 ]
-
-# add extra output if specified 
-if config['additional output']['genome comparison']:
-    pipeline_output.append(results_dict['fastANI_Prochlorococcus'])
 
 if config['additional output']['prokka gene annotation']:
     pipeline_output.append(results_dict['prokka_final_gff'])

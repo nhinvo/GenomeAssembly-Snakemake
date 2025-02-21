@@ -15,7 +15,6 @@ CheckM2:
   contamination threshold: 1  # remove assemblies with greater contamination 
 
 additional output:
-  genome comparison: False
   prokka gene annotation: False
   eggnog gene annotation: False
 

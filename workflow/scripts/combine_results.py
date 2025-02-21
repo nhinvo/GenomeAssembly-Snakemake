@@ -5,10 +5,13 @@ import pandas as pd
 from pathlib import Path 
 
 ### import paths to data tables ### 
+# inputs
 bindir_list = snakemake.input['bin_dirs']  # list of directories containin bins 
 quality_list = snakemake.input['qualities']  # list of checkm quality outputs
 classification_list = snakemake.input['classifications']  # list of gtdb-tk classification outputs 
-output = snakemake.output[0]  # path to output final .tsv file 
+# outputs
+output = snakemake.output['final_tsv']  # path to output final .tsv file 
+output_filtered = snakemake.output['final_tsv_filtered']  # path to output final .tsv file with checkM filtering
 
 def process_bins(bindir_list):
     """
@@ -109,16 +112,19 @@ def main():
 
     df = df[cols]
 
+    # sort df 
+    df = df.sort_values(by=['sample', 'Completeness'], ascending=False)
+
+    # save unfiltered data 
+    df.to_csv(output, sep='\t', index=False)
+
     # filter df by checkm results
     df = df[
         (df['Completeness'] > snakemake.config['CheckM2']['completeness threshold']) &
         (df['Contamination'] < snakemake.config['CheckM2']['contamination threshold'])
     ]
 
-    # sort df 
-    df = df.sort_values(by=['sample', 'Completeness'], ascending=False)
-
-    # save data 
-    df.to_csv(output, sep='\t', index=False)
+    # save filtered data 
+    df.to_csv(output_filtered, sep='\t', index=False)
 
 main()

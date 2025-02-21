@@ -3,6 +3,12 @@ Genome Assembly, Binning, Classification, and Gene Annotation Snakemake Pipeline
 
 <img src="workflow/images/GenomeAssembly-Snakemake.png" alt="Workflow Image" style="width:50%;">
 
+### Visualization
+<div style="display: flex; justify-content: space-between;">
+  <img src="workflow/images/bin_quality.png" alt="Image 1" style="width: 45%;"/>
+  <img src="workflow/images/bin_classification_GTDB.png" alt="Image 2" style="width: 45%;"/>
+</div>
+
 ## Setup
 ### 1. Install Snakemake and Conda/Mamba  
 Install Snakemake and Conda/Mamba following the instructions at this [link](https://snakemake.readthedocs.io/en/stable/getting_started/installation.html#:~:text=for%20installing%20Snakemake.-,Installation%20via%20Conda/Mamba,-This%20is%20the). 
@@ -36,11 +42,10 @@ Edit **config.yaml** file in the `inputs/` Directory:
   - Edit "seq data type"
     - Options: "illumina short read", "nanopore long read", pr "pacbio hifi long read"  
   - Edit paths to reference databases in "databases"
-  - Edit whether you want genome comparison and gene annotation in "additional output". 
-    - gene comparison: many-to-many fastANI comparison between all bins. 
+  - Edit whether you want gene annotation in "additional output". 
     - prokka gene annotation: annotate bins using prokka. 
     - eggnog gene annotation: add eggnog annotations on genes predicted by prokka.  
-  - Edit paths to scratch (intermediate) directory and results directory in lines 16 & 17. 
+  - Edit paths to scratch (intermediate) directory and results directory. 
 
 Create **samples.tsv** file in the `inputs/` Directory: 
   - Create samples.tsv file for your samples with the following required columns (and any other columns for your samples): 
@@ -103,25 +108,3 @@ As the pipeline runs, log messages will be saved into file named "main.[slurm_jo
 - `closest_genome_reference`: what genome in the GTDB database is the bin most closely related to 
 - `closest_genome_ani`: average nucleotide identity to the closest genome 
 - `warning`: GTDB-tk classification warning  
-
-**fastANI_Prochlorococcus.tsv:** tab-separated file of fastANI between Prochlorococcus genomes the following columns:  
-- `query`: query bin 
-- `reference`: reference bin 
-- `ANI`: Average Nucleotide Identity
-
-
-## Workflow
-- QC: 
-  - Illumina: bbduk read trimming
-  - Nanopore & PacBio: filtlong
-- Read Assembly: 
-  - Illumina: SPAdes
-  - Nanopore & PacBio: Flye/metaFlye
-- Read Mapping: 
-  - Illumina: bowtie2
-  - Nanopore & PacBio: minimap2
-- Read Binning: metabat2
-- Bin Quality Assessment: checkM2
-- Taxonomic Classification: GTDB-tk
-- Genome Comparison: fastANI, many-to-many (all bins are compared against eah other)
-- Gene Annotation: prokka 
