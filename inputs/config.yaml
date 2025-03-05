@@ -15,8 +15,8 @@ CheckM2:
   contamination threshold: 1  # remove assemblies with greater contamination 
 
 additional output:
-  prokka gene annotation: False
-  eggnog gene annotation: False
+  prokka gene annotation: True
+  eggnog gene annotation: True
 
 scratch directory: scratch
 results directory: results

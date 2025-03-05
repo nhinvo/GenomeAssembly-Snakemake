@@ -4,6 +4,7 @@ rule combine_results:
     """
     input:
         bin_dirs = expand(scratch_dict["metabat_binning"] / "bins" / "{sample}", sample=SAMPLES), 
+        bin_depths = expand(scratch_dict["metabat_binning"] / "depth" / "{sample}_depth.txt", sample=SAMPLES),
         qualities = expand(scratch_dict["checkm_bin_quality"] / "{sample}" / "quality_report.tsv", sample=SAMPLES), 
         classifications = expand(scratch_dict["gtdb_classification"]  / "{sample}" / "gtdbtk.bac120.summary.tsv", sample=SAMPLES), 
     output:

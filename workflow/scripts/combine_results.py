@@ -7,47 +7,93 @@ from pathlib import Path
 ### import paths to data tables ### 
 # inputs
 bindir_list = snakemake.input['bin_dirs']  # list of directories containin bins 
+bin_depths = snakemake.input['bin_depths']   # list of bin depth paths 
 quality_list = snakemake.input['qualities']  # list of checkm quality outputs
 classification_list = snakemake.input['classifications']  # list of gtdb-tk classification outputs 
 # outputs
 output = snakemake.output['final_tsv']  # path to output final .tsv file 
 output_filtered = snakemake.output['final_tsv_filtered']  # path to output final .tsv file with checkM filtering
 
-def process_bins(bindir_list):
+def process_sample_bin(depth_fpath):
+    """
+    Return a df with cols: [sample, bin_id, contig_name] for 
+    all bins in sample. 
+    """
+    depth_fpath = Path(depth_fpath)
+    sample_name = depth_fpath.stem.replace('_depth', '')
+    bin_dir = f"{depth_fpath.parent.parent}/bins/{sample_name}"
+
+    # obtain contigs (headers) in each bin 
+    df_data = {
+        'sample': [], 'bin_id': [], 'contigName': [], 
+    }
+
+    for bin_fpath in Path(bin_dir).glob('*.fa'):
+        bin_id = bin_fpath.stem.split('.')[-1]
+
+        with open(bin_fpath, 'r') as file:
+            for line in file:
+                if line.startswith('>'):
+                    contig_name = line.strip().replace('>', '')
+                    df_data['sample'].append(sample_name)
+                    df_data['bin_id'].append(bin_id)
+                    df_data['contigName'].append(contig_name)
+
+    df = pd.DataFrame(df_data)
+
+    return df
+
+
+def process_bins(bin_depths):
     """
     Returns a df of information on all bins from metabat2. 
     """
-    data = []
+    dfs = []  # list to store all sample bin contig data 
 
-    # cycle through every bins 
-    for bindir_fpath in bindir_list:
-        bindir_fpath = Path(bindir_fpath) 
-        sample = bindir_fpath.name
+    # 1. For each bin, obtain depth and contig data 
+    for depth_fpath in bin_depths: 
+        # import average depth for each contig 
+        depth_df = pd.read_table(depth_fpath)[['contigName', 'totalAvgDepth', 'contigLen']]
+        print(depth_df.head(5))
 
-        for bin_fpath in Path(bindir_fpath).glob('*fa'):
-            bin_id = bin_fpath.stem.split('.')[-1]  # e.g. '1' from full/file/path/Paragon14_34.1.fa
+        # obtain all contigs in each bin 
+        bin_df = process_sample_bin(depth_fpath)
+        print(bin_df.head(5))
 
-            # count number of contigs and length 
-            contig_count = 0
-            bin_len = 0
-            with open(bin_fpath, 'r') as file:
-                for line in file:
-                    if line.startswith('>'):
-                        contig_count += 1
-                    else:
-                        line_len = len(line)
-                        bin_len += line_len
+        # merge to obtain depth and length for each contig (that were binned)
+        df = pd.merge(bin_df, depth_df, on=['contigName'], how='left')
+        print(df.head(5))
 
-            bin_data = {
-                'sample': sample, 
-                'bin_id': bin_id, 
-                'bin_contig_num': contig_count, 
-                'bin_length': bin_len, 
-            }
+        dfs.append(df)
 
-            data.append(bin_data)
+    df = pd.concat(dfs)
 
-    df = pd.DataFrame(data)
+    # 2. obtain average depth for each bin and total length
+    groups = df.groupby(['sample', 'bin_id'])
+
+    dfs = []
+
+    for index, gdf in groups:
+        # skip average and sum if bin has only 1 contig 
+        if len(gdf) == 1:
+            gdf = gdf.drop(columns=['contigName'])
+            gdf['bin_contig_num'] = 1
+            dfs.append(gdf)
+            continue 
+
+        gdf = pd.DataFrame({
+            'sample': [index[0]], 
+            'bin_id': [index[1]], 
+            'totalAvgDepth': [gdf['totalAvgDepth'].mean()],
+            'contigLen': [gdf['contigLen'].sum()],
+            'bin_contig_num': len(gdf), 
+        })
+
+        dfs.append(gdf)
+
+    df = pd.concat(dfs)
+
+    df = df.rename(columns={'totalAvgDepth': 'bin_avg_depth', 'contigLen':'bin_length'})
 
     return df 
 
@@ -82,7 +128,7 @@ def process_quality(quality_list):
 
 def main():
     # obtain binning, quailty, and classification data for all samples
-    bin_df = process_bins(bindir_list)
+    bin_df = process_bins(bin_depths)
     quality_df = process_quality(quality_list)
     classification_df = process_classification(classification_list)
 
@@ -96,6 +142,7 @@ def main():
         'bin_id',
         'bin_contig_num',
         'bin_length',
+        'bin_avg_depth', 
         'Completeness', 
         'Contamination', 
         'kingdom',
